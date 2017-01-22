@@ -1,0 +1,40 @@
+{
+  "name": "like-bind-operator",
+  "version": "0.0.1",
+  "description": "Library to provide an alternative to the This-Binding Syntax proposal compatible with ES6.",
+  "main": "./lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "files": [
+    "lib",
+    "src",
+    "LICENSE",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "babel -s -d lib src",
+    "eslint": "eslint .",
+    "mocha": "mocha --compilers js:babel-core/register test/test.js",
+    "prepublish": "npm run build",
+    "test": "npm run-script eslint && npm run-script mocha"
+  },
+  "repository": "Volune/like-bind-operator",
+  "keywords": [
+    "bind",
+    "operator"
+  ],
+  "author": "Jeremy Judeaux <jeremy.judeaux@volune.net>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.18.0",
+    "babel-core": "^6.21.0",
+    "babel-eslint": "^7.1.1",
+    "babel-preset-es2015": "^6.18.0",
+    "eslint": "^3.12.2",
+    "eslint-config-airbnb-base": "^11.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "mocha": "^3.2.0",
+    "must": "^0.13.2"
+  }
+}
