@@ -7,10 +7,9 @@ Object.defineProperty(Object.prototype, OPERATOR, {
   writable: false,
   value: function likeBindOperator(fn) {
     const that = this;
-    // eslint-disable-next-line func-names
-    return Object.defineProperties(function () {
+    return Object.defineProperties(function boundFunction() {
       // eslint-disable-next-line prefer-rest-params
-      fn.apply(that, arguments);
+      return fn.apply(that, arguments);
     }, {
       displayName: {
         configurable: true,

@@ -3,6 +3,7 @@ import expect from 'must';
 import Δ from '../src/index';
 
 const SOME_ARG = { isSomeArg: true };
+const SOME_RESULT = { isSomeResult: true };
 
 describe('like-bind-operator', () => {
   let called = false;
@@ -13,7 +14,27 @@ describe('like-bind-operator', () => {
     called = true;
     calledWithThis = this;
     calledWithArguments = args;
+    return SOME_RESULT;
   }
+
+  const testItWorksWith = (value) => {
+    const result = value[Δ](functionToBind)(SOME_ARG);
+    expect(called).to.be.true();
+    if (Number.isNaN(value)) {
+      expect(calledWithThis).to.be.nan();
+    } else {
+      expect(calledWithThis).to.equal(value);
+    }
+    expect(calledWithArguments).to.have.length(1);
+    expect(calledWithArguments[0]).to.equal(SOME_ARG);
+    expect(result).to.equal(SOME_RESULT);
+  };
+
+  const testItFailsWith = (invalidValue) => {
+    expect(() => {
+      invalidValue[Δ](functionToBind)(SOME_ARG);
+    }).to.throw();
+  };
 
   beforeEach(() => {
     called = false;
@@ -21,122 +42,31 @@ describe('like-bind-operator', () => {
     calledWithArguments = [];
   });
 
-  it('works on object (empty)', () => {
-    const object = {};
-    object[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(object);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on object (empty)', () => testItWorksWith({}));
 
-  it('works on object', () => {
-    const object = { A: 1 };
-    object[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(object);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on object', () => testItWorksWith({ A: 1 }));
 
-  it('works on array (empty)', () => {
-    const array = [];
-    array[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(array);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on array (empty)', () => testItWorksWith([]));
 
-  it('works on array', () => {
-    const array = [1];
-    array[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(array);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on array', () => testItWorksWith([1]));
 
-  it('works on number (0)', () => {
-    const number = 0;
-    number[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(number);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on number (0)', () => testItWorksWith(0));
 
-  it('works on number (1)', () => {
-    const number = 1;
-    number[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(number);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on number (1)', () => testItWorksWith(1));
 
-  it('works on number (+Infinity)', () => {
-    const number = +Infinity;
-    number[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(number);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on number (+Infinity)', () => testItWorksWith(+Infinity));
 
-  it('works on number (NaN)', () => {
-    const number = NaN;
-    number[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.be.nan();
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on number (NaN)', () => testItWorksWith(NaN));
 
-  it('works on boolean (false)', () => {
-    const boolean = false;
-    boolean[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(boolean);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on boolean (false)', () => testItWorksWith(false));
 
-  it('works on boolean (true)', () => {
-    const boolean = true;
-    boolean[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(boolean);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on boolean (true)', () => testItWorksWith(true));
 
-  it('works on string (empty)', () => {
-    const string = '';
-    string[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(string);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on string (empty)', () => testItWorksWith(''));
 
-  it('works on string', () => {
-    const string = 'string';
-    string[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(string);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on string', () => testItWorksWith('string'));
 
-  it('works on function', () => {
-    const func = () => undefined;
-    func[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(func);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('works on function', () => testItWorksWith(() => undefined));
 
   it('keeps function name', () => {
     function myFunction() {
@@ -171,24 +101,9 @@ describe('like-bind-operator', () => {
     expect(boundFunction.length).to.equal(myFunction.length);
   });
 
-  it('fails with undefined', () => {
-    expect(() => {
-      const invalid = undefined;
-      invalid[Δ](functionToBind)(SOME_ARG);
-    }).to.throw();
-  });
+  it('fails with undefined', () => testItFailsWith(undefined));
 
-  it('fails with null', () => {
-    expect(() => {
-      const invalid = undefined;
-      invalid[Δ](functionToBind)(SOME_ARG);
-    }).to.throw();
-  });
+  it('fails with null', () => testItFailsWith(null));
 
-  it('fails with object with empty prototype', () => {
-    expect(() => {
-      const invalid = Object.create(null);
-      invalid[Δ](functionToBind)(SOME_ARG);
-    }).to.throw();
-  });
+  it('fails with object with empty prototype', () => testItFailsWith(Object.create(null)));
 });
