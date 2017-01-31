@@ -1,6 +1,6 @@
 {
   "name": "like-bind-operator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Library to provide an alternative to the This-Binding Syntax proposal compatible with ES6.",
   "main": "./lib/index.js",
   "directories": {
