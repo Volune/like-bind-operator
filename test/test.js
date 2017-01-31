@@ -106,4 +106,39 @@ describe('like-bind-operator', () => {
   it('fails with null', () => testItFailsWith(null));
 
   it('fails with object with empty prototype', () => testItFailsWith(Object.create(null)));
+
+  it('resolves property if given a string', () => {
+    const objectWithProperty = { member: functionToBind };
+    objectWithProperty[Δ]('member')(SOME_ARG);
+    expect(called).to.be.true();
+    expect(calledWithThis).to.equal(objectWithProperty);
+    expect(calledWithArguments).to.have.length(1);
+    expect(calledWithArguments[0]).to.equal(SOME_ARG);
+  });
+
+  it('resolves property if given a number', () => {
+    const arrayWithElement = [functionToBind];
+    arrayWithElement[Δ](0)(SOME_ARG);
+    expect(called).to.be.true();
+    expect(calledWithThis).to.equal(arrayWithElement);
+    expect(calledWithArguments).to.have.length(1);
+    expect(calledWithArguments[0]).to.equal(SOME_ARG);
+  });
+
+  it('resolves property if given a symbol', () => {
+    const symbol = Symbol('symbol');
+    const objectWithSymbolProperty = { [symbol]: functionToBind };
+    objectWithSymbolProperty[Δ](symbol)(SOME_ARG);
+    expect(called).to.be.true();
+    expect(calledWithThis).to.equal(objectWithSymbolProperty);
+    expect(calledWithArguments).to.have.length(1);
+    expect(calledWithArguments[0]).to.equal(SOME_ARG);
+  });
+
+  it('throws an exception if invalid property', () => {
+    const unknownSymbol = Symbol('unknownSymbol');
+    expect(() => {
+      ({})[Δ](unknownSymbol)(SOME_ARG);
+    }).to.throw();
+  });
 });

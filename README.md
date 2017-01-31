@@ -29,4 +29,14 @@ array[$](logThis)();
 number[$](logThis)();
 boolean[$](logThis)();
 func[$](logThis)();
+
+
+// Can also resolve properties
+const objectWithProperty = {
+  objectFunc() { return 1; },
+};
+const arrayWithElement = [ () => 1 ];
+
+objectWithProperty[$]('objectFunc')();
+arrayWithElement[$](0)();
 ```

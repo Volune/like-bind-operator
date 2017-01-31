@@ -5,7 +5,14 @@ Object.defineProperty(Object.prototype, OPERATOR, {
   configurable: false,
   enumerable: false,
   writable: false,
-  value: function likeBindOperator(fn) {
+  value: function likeBindOperator(param) {
+    let fn = param;
+    if (typeof fn !== 'function') {
+      fn = this[param];
+    }
+    if (typeof fn !== 'function') {
+      throw new Error('Invalid parameter to bind operator');
+    }
     const that = this;
     return Object.defineProperties(function boundFunction() {
       // eslint-disable-next-line prefer-rest-params
