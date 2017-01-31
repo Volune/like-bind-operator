@@ -5,21 +5,24 @@ import Δ from '../src/index';
 const SOME_ARG = { isSomeArg: true };
 const SOME_RESULT = { isSomeResult: true };
 
+const SOME_SYMBOL = Symbol('someSymbol');
+const SOME_UNKNOWN_SYMBOL = Symbol('someUnknownSymbol');
+
 describe('like-bind-operator', () => {
-  let called = false;
+  let calledFunctionToBind = false;
   let calledWithThis = null;
   let calledWithArguments = [];
 
   function functionToBind(...args) {
-    called = true;
+    calledFunctionToBind = true;
     calledWithThis = this;
     calledWithArguments = args;
     return SOME_RESULT;
   }
 
-  const testItWorksWith = (value) => {
-    const result = value[Δ](functionToBind)(SOME_ARG);
-    expect(called).to.be.true();
+  const testAvailableOn = (value, param) => {
+    const result = value[Δ](param)(SOME_ARG);
+    expect(calledFunctionToBind).to.be.true();
     if (Number.isNaN(value)) {
       expect(calledWithThis).to.be.nan();
     } else {
@@ -30,43 +33,43 @@ describe('like-bind-operator', () => {
     expect(result).to.equal(SOME_RESULT);
   };
 
-  const testItFailsWith = (invalidValue) => {
+  const testNotAvailableOn = (invalidValue, param) => {
     expect(() => {
-      invalidValue[Δ](functionToBind)(SOME_ARG);
+      invalidValue[Δ](param)(SOME_ARG);
     }).to.throw();
   };
 
   beforeEach(() => {
-    called = false;
+    calledFunctionToBind = false;
     calledWithThis = null;
     calledWithArguments = [];
   });
 
-  it('works on object (empty)', () => testItWorksWith({}));
+  it('available on object (empty)', () => testAvailableOn({}, functionToBind));
 
-  it('works on object', () => testItWorksWith({ A: 1 }));
+  it('available on object', () => testAvailableOn({ A: 1 }, functionToBind));
 
-  it('works on array (empty)', () => testItWorksWith([]));
+  it('available on array (empty)', () => testAvailableOn([], functionToBind));
 
-  it('works on array', () => testItWorksWith([1]));
+  it('available on array', () => testAvailableOn([1], functionToBind));
 
-  it('works on number (0)', () => testItWorksWith(0));
+  it('available on number (0)', () => testAvailableOn(0, functionToBind));
 
-  it('works on number (1)', () => testItWorksWith(1));
+  it('available on number (1)', () => testAvailableOn(1, functionToBind));
 
-  it('works on number (+Infinity)', () => testItWorksWith(+Infinity));
+  it('available on number (+Infinity)', () => testAvailableOn(+Infinity, functionToBind));
 
-  it('works on number (NaN)', () => testItWorksWith(NaN));
+  it('available on number (NaN)', () => testAvailableOn(NaN, functionToBind));
 
-  it('works on boolean (false)', () => testItWorksWith(false));
+  it('available on boolean (false)', () => testAvailableOn(false, functionToBind));
 
-  it('works on boolean (true)', () => testItWorksWith(true));
+  it('available on boolean (true)', () => testAvailableOn(true, functionToBind));
 
-  it('works on string (empty)', () => testItWorksWith(''));
+  it('available on string (empty)', () => testAvailableOn('', functionToBind));
 
-  it('works on string', () => testItWorksWith('string'));
+  it('available on string', () => testAvailableOn('string', functionToBind));
 
-  it('works on function', () => testItWorksWith(() => undefined));
+  it('available on function', () => testAvailableOn(() => undefined, functionToBind));
 
   it('keeps function name', () => {
     function myFunction() {
@@ -101,44 +104,17 @@ describe('like-bind-operator', () => {
     expect(boundFunction.length).to.equal(myFunction.length);
   });
 
-  it('fails with undefined', () => testItFailsWith(undefined));
+  it('not available on undefined', () => testNotAvailableOn(undefined, functionToBind));
 
-  it('fails with null', () => testItFailsWith(null));
+  it('not available on null', () => testNotAvailableOn(null, functionToBind));
 
-  it('fails with object with empty prototype', () => testItFailsWith(Object.create(null)));
+  it('not available on object with empty prototype', () => testNotAvailableOn(Object.create(null), functionToBind));
 
-  it('resolves property if given a string', () => {
-    const objectWithProperty = { member: functionToBind };
-    objectWithProperty[Δ]('member')(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(objectWithProperty);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('resolves property if given a string', () => testAvailableOn({ member: functionToBind }, 'member'));
 
-  it('resolves property if given a number', () => {
-    const arrayWithElement = [functionToBind];
-    arrayWithElement[Δ](0)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(arrayWithElement);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('resolves property if given a number', () => testAvailableOn([functionToBind], 0));
 
-  it('resolves property if given a symbol', () => {
-    const symbol = Symbol('symbol');
-    const objectWithSymbolProperty = { [symbol]: functionToBind };
-    objectWithSymbolProperty[Δ](symbol)(SOME_ARG);
-    expect(called).to.be.true();
-    expect(calledWithThis).to.equal(objectWithSymbolProperty);
-    expect(calledWithArguments).to.have.length(1);
-    expect(calledWithArguments[0]).to.equal(SOME_ARG);
-  });
+  it('resolves property if given a symbol', () => testAvailableOn({ [SOME_SYMBOL]: functionToBind }, SOME_SYMBOL));
 
-  it('throws an exception if invalid property', () => {
-    const unknownSymbol = Symbol('unknownSymbol');
-    expect(() => {
-      ({})[Δ](unknownSymbol)(SOME_ARG);
-    }).to.throw();
-  });
+  it('throws an exception if invalid property', () => testNotAvailableOn({}, SOME_UNKNOWN_SYMBOL));
 });
