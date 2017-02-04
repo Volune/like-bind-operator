@@ -49,12 +49,15 @@ arrayWithElement[$][0]();
 ## Extra utility operator: callback to promise
 
 ```javascript
-const fs = require('fs');
 // Use whatever variable name that you like
 const $P = require('like-bind-operator/callbackToPromise').default;
 
-fs[$P]('stat')(__filename)
-  .then((stat) => {
-    console.log(JSON.stringify(stat, null, '  '));
+const delayUpperCase = (value, callback) => {
+  setTimeout(() => callback(null, value.toUpperCase()), 1000);
+};
+
+asyncFunc[$P]('string')
+  .then((result) => {
+    console.log(result);
   });
 ```
