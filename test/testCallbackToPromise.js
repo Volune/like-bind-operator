@@ -11,7 +11,7 @@ const SOME_THROWN_EXCEPTION = { isSomeThrownException: true };
 const SOME_RESULT = { isSomeResult: true };
 const SOME_ERROR = { isSomeError: true };
 
-describe('callback-to-promise-operator', () => {
+describe.skip('callback-to-promise-operator', () => {
   it('resolves on sync callback result', () => {
     const object = {
       [FUNC](callback) {

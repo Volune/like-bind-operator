@@ -20,8 +20,8 @@ describe('like-bind-operator', () => {
     return SOME_RESULT;
   }
 
-  const testAvailableOn = (value, param) => {
-    const result = value[Δ](param)(SOME_ARG);
+  const checkAvailableExpectations = (value, boundFunction) => {
+    const result = boundFunction(SOME_ARG);
     expect(calledFunctionToBind).to.be.true();
     if (Number.isNaN(value)) {
       expect(calledWithThis).to.be.nan();
@@ -31,6 +31,11 @@ describe('like-bind-operator', () => {
     expect(calledWithArguments).to.have.length(1);
     expect(calledWithArguments[0]).to.equal(SOME_ARG);
     expect(result).to.equal(SOME_RESULT);
+  };
+
+  const testAvailableOn = (value, param) => {
+    const boundFunction = value[Δ](param);
+    checkAvailableExpectations(value, boundFunction);
   };
 
   const testNotAvailableOn = (invalidValue, param) => {
@@ -115,6 +120,27 @@ describe('like-bind-operator', () => {
   it('resolves property if given a number', () => testAvailableOn([functionToBind], 0));
 
   it('resolves property if given a symbol', () => testAvailableOn({ [SOME_SYMBOL]: functionToBind }, SOME_SYMBOL));
+
+  const itWithProxy = typeof Proxy !== 'undefined' ? it : it.skip;
+
+  itWithProxy('resolves property of object using proxy', () => {
+    const value = { member: functionToBind };
+    const boundFunction = value[Δ].member;
+    checkAvailableExpectations(value, boundFunction);
+  });
+
+  itWithProxy('resolves property of array using proxy', () => {
+    const value = [functionToBind];
+    const boundFunction = value[Δ][0];
+    checkAvailableExpectations(value, boundFunction);
+  });
+
+  itWithProxy('resolves property of string using proxy', () => {
+    const value = 'test';
+    const boundFunction = value[Δ].toUpperCase;
+    const result = boundFunction();
+    expect(result).to.equal(value.toUpperCase());
+  });
 
   it('throws an exception if invalid property', () => testNotAvailableOn({}, SOME_UNKNOWN_SYMBOL));
 });

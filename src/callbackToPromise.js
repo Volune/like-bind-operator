@@ -5,7 +5,7 @@ const RETURNED_VALUE = Symbol('callback-to-promise-returned-value');
 const THROWN_VALUE = Symbol('callback-to-promise-thrown-value');
 const CALLBACK_ARGUMENTS = Symbol('callback-to-promise-callback-arguments');
 
-defineOperator(OPERATOR, (that, fn) => (...args) => {
+const func = (that, fn) => (...args) => {
   let resolve;
   let reject;
   const promise = new Promise((resolveParam, rejectParam) => {
@@ -26,7 +26,7 @@ defineOperator(OPERATOR, (that, fn) => (...args) => {
     reject(exception);
   }
   return promise;
-});
+};
 
 export default OPERATOR;
 export {

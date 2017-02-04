@@ -4,14 +4,14 @@
 
 This library is meant to provide an alternative to the [This-Binding Syntax](https://github.com/tc39/proposal-bind-operator) compatible with ES6.
 
-This library is based on the [This-Binding Syntax](https://github.com/tc39/proposal-bind-operator) proposal. It tries to provide a _short_ syntax.
+It tries to provide a *short*, *readable* syntax to bind functions. It gets even better if the environment supports `Proxy`.
 
 *Note*: It will not work if the value to bind is `undefined`, `null` or an object without prototype (for example `Object.create(null)`).
 
 ## Examples
 
 ```javascript
-// Use whatever variable name that you like
+// Use whatever variable name that you like for the operator
 import $ from 'like-bind-operator';
 
 function logThis() {
@@ -39,6 +39,10 @@ const arrayWithElement = [ () => 1 ];
 
 objectWithProperty[$]('objectFunc')();
 arrayWithElement[$](0)();
+
+// With Proxy
+objectWithProperty[$].objectFunc();
+arrayWithElement[$][0]();
 ```
 
 
