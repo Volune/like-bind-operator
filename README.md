@@ -44,20 +44,3 @@ arrayWithElement[$](0)();
 objectWithProperty[$].objectFunc();
 arrayWithElement[$][0]();
 ```
-
-
-## Extra utility operator: callback to promise
-
-```javascript
-// Use whatever variable name that you like
-const $P = require('like-bind-operator/callbackToPromise').default;
-
-const delayUpperCase = (value, callback) => {
-  setTimeout(() => callback(null, value.toUpperCase()), 1000);
-};
-
-asyncFunc[$P]('string')
-  .then((result) => {
-    console.log(result);
-  });
-```
